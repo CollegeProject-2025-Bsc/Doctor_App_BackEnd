@@ -20,7 +20,7 @@ def hello_world():  # put application's code here
 def getDepartmentData():
     if request.method == 'POST':
         db_ref = db.collection('Department').stream()
-        return jsonify(list(map(lambda doc: doc.to_dict(), db_ref))[2])
+        return jsonify(list(map(lambda doc: doc.to_dict(), db_ref)))
     else:
         return None
 
