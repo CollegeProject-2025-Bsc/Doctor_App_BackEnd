@@ -1,3 +1,5 @@
+from warnings import catch_warnings
+
 from flask import Flask, jsonify, request
 import firebase_admin
 from firebase_admin import firestore, credentials
@@ -79,10 +81,88 @@ def getDepartmentData():
         db_ref = db.collection('Department').stream()
         return jsonify(list(map(lambda doc: doc.to_dict(), db_ref)))
     else:
+        return {"status":False}
+
+
+
+
+
+
+##don't work with these user apis
+@app.route('/createUser', methods=['POST'])
+def createUser():
+    if request.method == 'POST':
+        uid = request.args.get('UID')
+        isPhoneVerified = False
+        isDetailsFilled = False
+        print(uid)
+        data = {"uid": uid, "isPhoneVerified": isPhoneVerified, "isDetailsFilled": isDetailsFilled}
+        db.collection("Users").document(uid).set(data)
+        return jsonify({"status":True}),200
+    else:
+        return {"status":False}
+
+
+@app.route('/getUser',methods=['POST'])
+def getUser():
+    if request.method == 'POST':
+        uid = request.args.get('uid')
+        user = db.collection("Users").document(uid).get()
+
+        print(user.to_dict())
+        return jsonify(user.to_dict())
+    else:
         return None
 
 
+@app.route('/updateUser',methods=['POST'])
+def updateUser():
+    if request.method == "POST":
+        uid = request.get_json().get('uid')
+        uName = request.get_json().get('uName')
+        uGender = request.get_json().get('uGender')
+        DOB = request.get_json().get('DOB')
+        uAddress = request.get_json().get('uAddress')
+        uLat = request.get_json().get('uLat')
+        uLong = request.get_json().get('uLong')
+        uEmail = request.get_json().get('uEmail')
+        uPhone = request.get_json().get('uPhone')
+        isPhoneVerified = request.get_json().get('isPhoneVerified')
+        isDetailsFilled = request.get_json().get('isDetailsFilled')
 
+        user = db.collection("Users").document(uid)
+        try:
+            user.update({
+                "uid":uid,
+                "uName":uName,
+                "uGender":uGender,
+                "DOB":DOB,
+                "uAddress":uAddress,
+                "uLat":uLat,
+                "uLong":uLong,
+                "uEmail":uEmail,
+                "uPhone":uPhone,
+                "isPhoneVerified":isPhoneVerified,
+                "isDetailsFilled":isDetailsFilled,
+            })
+            return jsonify({"status":True})
+        except Exception:
+            return jsonify({"status":False})
+    else:
+        return None
+
+@app.route("/getBanners" , methods = ['POST'])
+def getBanners():
+    if request.method == 'POST':
+        banners = []
+        banner = db.collection("Advertisement").stream()
+        for data in banner:
+            banners.append(data.to_dict())
+
+        return jsonify(banners)
+    else:
+        print("error")
+        return None
 
 ## main function
 if __name__ == '__main__':
@@ -95,4 +175,3 @@ if __name__ == '__main__':
 ## then open a new terminal
 ## And run this command to redirect all request to our local host   ------>    ngrok http --url=safely-massive-seahorse.ngrok-free.app 5000
 ## backend url is ------>   https://safely-massive-seahorse.ngrok-free.app
-
