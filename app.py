@@ -100,7 +100,7 @@ def createUser():
         db.collection("Users").document(uid).set(data)
         return jsonify({"status":True}),200
     else:
-        return {"status":False}
+        return jsonify({"status":False})
 
 
 @app.route('/getUser',methods=['POST'])
