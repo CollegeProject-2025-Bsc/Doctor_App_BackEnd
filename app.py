@@ -9,7 +9,7 @@ import random
 
 ## twilio auth credential
 TWILIO_ACCOUNT_SID = 'ACe13f73d65b4d20704f76f70631e64c9f'
-TWILIO_AUTH_TOKEN = '42eef7a34c4000944d424ad30f7f96da'
+TWILIO_AUTH_TOKEN = '9f986d31eb7ee8e59792ddc15e0033b7'
 TWILIO_PHONE_NUMBER = '+17627631791'
 
 
@@ -68,7 +68,7 @@ def hello_world():  # put application's code here
 
 
 ## route for getting popular doctor
-@app.route('/popular_docs')
+@app.route('/popular_docs', methods = ['POST'])
 def getPopularDoctors():
     db_ref = db.collection('Department').document("0Z0REKdBoh26uztxls5O").collection("Doctors").stream()
     return jsonify(list(map(lambda doc: doc.to_dict(), db_ref)))
@@ -106,7 +106,7 @@ def createUser():
 @app.route('/getUser',methods=['POST'])
 def getUser():
     if request.method == 'POST':
-        uid = request.args.get('uid')
+        uid = request.args.get('UID')
         user = db.collection("Users").document(uid).get()
 
         print(user.to_dict())
@@ -127,6 +127,7 @@ def updateUser():
         uLong = request.get_json().get('uLong')
         uEmail = request.get_json().get('uEmail')
         uPhone = request.get_json().get('uPhone')
+        uProfilePic = request.get_json().get('uProfilePic')
         isPhoneVerified = request.get_json().get('isPhoneVerified')
         isDetailsFilled = request.get_json().get('isDetailsFilled')
 
@@ -142,6 +143,7 @@ def updateUser():
                 "uLong":uLong,
                 "uEmail":uEmail,
                 "uPhone":uPhone,
+                "uProfilePic":uProfilePic,
                 "isPhoneVerified":isPhoneVerified,
                 "isDetailsFilled":isDetailsFilled,
             })
