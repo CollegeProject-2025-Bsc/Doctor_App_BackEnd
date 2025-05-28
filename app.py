@@ -165,6 +165,26 @@ def getBanners():
         print("error")
         return None
 
+
+
+
+# Route for retrieving favourite doctors for specific user
+@app.route('/get_fav_doctors', methods=['POST'])
+def getFavDoctors ():
+    if request.method == 'POST':
+        user_id = request.args.get('uid')
+        try:
+            user_doc = db.collection('Users').document(user_id).collection('Fav Doctors').stream()
+            return jsonify(list(map(lambda doc: doc.to_dict(), user_doc)))
+
+        except Exception:
+            return jsonify({"status": False})
+    else:
+        return None
+
+
+
+
 ## main function
 if __name__ == '__main__':
     app.run()
