@@ -183,7 +183,7 @@ def getFavDoctors ():
 
 @app.route("/addFavDoctor", methods = ['POST'])
 def addFavDoctor():
-    if (request.method == 'POST'):
+    if request.method == 'POST':
         user_id = request.args.get('uid')
         doc_id = request.args.get('did')
         dep_id = request.args.get('id')
@@ -202,6 +202,7 @@ if __name__ == '__main__':
     app.run()
 
 
+##code pushing
 ## last block of our app.py file
 ## Run the app.py using this command in terminal   ------>    python .\app.py
 ## then open a new terminal
