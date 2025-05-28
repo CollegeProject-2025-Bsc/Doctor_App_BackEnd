@@ -201,7 +201,6 @@ def addFavDoctor():
 if __name__ == '__main__':
     app.run()
 
-
 ## last block of our app.py file
 ## Run the app.py using this command in terminal   ------>    python .\app.py
 ## then open a new terminal
