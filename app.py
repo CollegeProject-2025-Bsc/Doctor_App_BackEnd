@@ -1,4 +1,3 @@
-from warnings import catch_warnings
 from flask import Flask, jsonify, request
 import firebase_admin
 from firebase_admin import firestore, credentials
@@ -182,7 +181,9 @@ def getFavDoctors ():
     else:
         return None
 
-
+@app.route("/addFavDoctor", methods = ['POST'])
+def addFavDoctor():
+    return None
 
 
 ## main function
