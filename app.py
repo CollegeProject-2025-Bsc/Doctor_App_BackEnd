@@ -183,7 +183,18 @@ def getFavDoctors ():
 
 @app.route("/addFavDoctor", methods = ['POST'])
 def addFavDoctor():
-    return None
+    if (request.method == 'POST'):
+        user_id = request.args.get('uid')
+        doc_id = request.args.get('did')
+        dep_id = request.args.get('id')
+
+        fav_doc_id = db.collection('Users').document(user_id).collection('Fav Doctors').document().id
+
+        fav_doc_data = {"id": str(fav_doc_id), "uid": str(user_id), "did": str(doc_id), "dep_id": dep_id}
+        db.collection('Users').document(user_id).collection('Fav Doctors').document(fav_doc_id).set(fav_doc_data)
+        return jsonify({"status": True})
+    else:
+        return None
 
 
 ## main function
