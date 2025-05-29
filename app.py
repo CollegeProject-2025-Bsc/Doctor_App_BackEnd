@@ -235,6 +235,24 @@ def bookAppointment():
 
 
 
+# Route for retrieving all Appointment details booked by a specific user
+@app.route('/get_user_appointments', methods=['POST'])
+def getUserAppointments():
+    if request.method == 'POST':
+            user_id = request.args.get('uid')
+            if not user_id:
+                return jsonify({'error': 'Missing uid parameter'}), 400
+
+            try:
+                appointments_ref = db.collection('Appointment').where('user_id', '==', user_id).stream()
+                return jsonify({'appointments': list(map(lambda doc: doc.to_dict(), appointments_ref))}), 200
+
+            except Exception:
+                return jsonify({"status": False})
+    else:
+        return None
+
+
 
 
 ## main function
