@@ -66,14 +66,14 @@ def hello_world():  # put application's code here
 
 
 ## route for getting popular doctor
-@app.route('/popular_docs', methods = ['POST'])
+@app.route('/popular_docs', methods=['POST'])
 def getPopularDoctors():
     db_ref = db.collection('Department').document("0Z0REKdBoh26uztxls5O").collection("Doctors").stream()
     return jsonify(list(map(lambda doc: doc.to_dict(), db_ref)))
 
 
 ## route for getting department
-@app.route('/Department', methods = ['POST'])
+@app.route('/Department', methods=['POST'])
 def getDepartmentData():
     if request.method == 'POST':
         db_ref = db.collection('Department').stream()
@@ -195,6 +195,46 @@ def addFavDoctor():
         return jsonify({"status": True})
     else:
         return None
+
+
+
+
+
+
+
+# Route for booking an Appointment
+@app.route('/Book_Appointment', methods=['POST'])
+def bookAppointment():
+    if request.method == 'POST':
+            data = request.get_json()   # Give input in JSON format in Postman
+
+            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']
+            missing_fields = [field for field in required_fields if field not in data]
+            if missing_fields:
+                missed = ", ".join(missing_fields)
+                return jsonify({'error': f'Missing fields: {missed}'}), 400
+
+            try:
+                appointment_id = db.collection('Appointment').document().id
+                appointment_data = {
+                    'appointment_id': appointment_id,
+                    'user_id': data['uid'],
+                    'doctor_id': data['did'],
+                    'appointment_slot': data['appointment_slot'],
+                    'appointment_date': data['appointment_date'],  # Expected format: "DD-MM-YYYY"
+                    'payment_mode': data['payment_mode'],
+                    'payment_status': 'pending'
+                }
+                db.collection('Appointment').document(appointment_id).set(appointment_data)
+                return jsonify({'message': 'Your Appointment has been Successfully Booked.', 'appointment_id': appointment_id}), 201
+
+            except Exception:
+                return jsonify({"status": False})
+    else:
+        return None
+
+
+
 
 
 ## main function
