@@ -203,12 +203,12 @@ def addFavDoctor():
 
 
 # Route for booking an Appointment
-@app.route('/Book_Appointment', methods=['POST'])
+@app.route('/book_appointment', methods=['POST'])
 def bookAppointment():
     if request.method == 'POST':
             data = request.get_json()   # Give input in JSON format in Postman
 
-            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']
+            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']it
             missing_fields = [field for field in required_fields if field not in data]
             if missing_fields:
                 missed = ", ".join(missing_fields)
