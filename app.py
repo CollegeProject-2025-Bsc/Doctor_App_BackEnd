@@ -106,8 +106,6 @@ def getUser():
     if request.method == 'POST':
         uid = request.args.get('UID')
         user = db.collection("Users").document(uid).get()
-
-        print(user.to_dict())
         return jsonify(user.to_dict())
     else:
         return None
