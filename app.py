@@ -255,6 +255,31 @@ def getUserAppointments():
 
 
 
+
+
+# Route for retrieving User details
+@app.route('/get_user_details', methods=['POST'])
+def getUserDetails():
+    if request.method == 'POST':
+          user_id = request.args.get('uid')
+          if not user_id:
+                return jsonify({'error': 'Missing uid parameter'}), 400
+
+          try:
+                user_details = db.collection('Users').document(user_id).get()
+                if user_details.exists:
+                       return jsonify({'My Profile': user_details.to_dict()}), 200
+                else:
+                    return jsonify({'error': 'User not found'}), 404
+
+          except Exception:
+              return jsonify({"status": False})
+
+    else:
+          return None
+
+
+
 ## main function
 if __name__ == '__main__':
     app.run()
