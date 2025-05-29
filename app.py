@@ -208,7 +208,7 @@ def bookAppointment():
     if request.method == 'POST':
             data = request.get_json()   # Give input in JSON format in Postman
 
-            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']it
+            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']
             missing_fields = [field for field in required_fields if field not in data]
             if missing_fields:
                 missed = ", ".join(missing_fields)
