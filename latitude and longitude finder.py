@@ -4,7 +4,6 @@ from firebase_admin import firestore, credentials
 
 
 def findLatLong(address):
-    addressD = str(address)
     url = f"https://us1.locationiq.com/v1/search?key={api_key}&q={address}&format=json"
     response = requests.get(url)
     data = response.json()
@@ -31,5 +30,3 @@ for dep in db_dep:
             lat,long = findLatLong(doctor.get("caddress"))
             print(f"{lat} , {long}")
             db.collection('Department').document(dep.id).collection("Doctors").document(doctors.id).update({"clatitude": float(lat),"clongitude": float(long)})
-
-
