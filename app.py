@@ -280,6 +280,33 @@ def getUserDetails():
 
 
 
+
+
+# Route for retrieving the list of all Doctors from a specific Department
+@app.route('/get_department_doctors', methods=['POST'])
+def getDepartmentDoctors():
+    if request.method == 'POST':
+          dept_id = request.args.get('id')
+          if not dept_id:
+                return jsonify({'error': 'Please enter the department id.'}), 400
+
+          try:
+                dept_ref = db.collection('Department').document(dept_id)
+                dept_data = dept_ref.get()
+                field_name = dept_data.to_dict().get('field')
+                doc_list = dept_ref.collection('Doctors').stream()
+                return jsonify({f'List of Doctors in {field_name} Department': list(map(lambda doc: doc.to_dict(), doc_list))}), 200
+
+          except Exception:
+              return jsonify({"status": False})
+    else:
+          return None
+
+
+
+
+
+
 ## main function
 if __name__ == '__main__':
     app.run()
