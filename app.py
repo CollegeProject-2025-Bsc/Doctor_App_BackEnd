@@ -32,6 +32,341 @@ app = Flask(__name__)
 
 
 
+disease_to_specialization = {
+    "kidney problem":["NEPHROLOGY"],
+    "kidney failure":["NEPHROLOGY"],
+    "chronic kidney disease":["NEPHROLOGY"],
+    "acute kidney injury":["NEPHROLOGY"],
+    "kidney stones":["NEPHROLOGY"],
+    "nephrotic syndrome":["NEPHROLOGY"],
+    "polycystic kidney disease":["NEPHROLOGY"],
+    "glomerulonephritis":["NEPHROLOGY"],
+    "urinary tract infection":["NEPHROLOGY"],
+    "uti":["NEPHROLOGY"],
+    "blood in urine":["NEPHROLOGY"],
+    "frequent urination":["NEPHROLOGY"],
+    "painful urination":["NEPHROLOGY"],
+    "swelling in legs or feet":["NEPHROLOGY"],
+    "foamy urine":["NEPHROLOGY"],
+    "high creatinine":["NEPHROLOGY"],
+    "renal failure":["NEPHROLOGY"],
+    "renal disease":["NEPHROLOGY"],
+    "nephrology":["NEPHROLOGY"],
+    "dialysis":["NEPHROLOGY"],
+    "kidney pain":["NEPHROLOGY"],
+    "kidney transplant":["NEPHROLOGY"],
+    "kidney":["NEPHROLOGY"],
+
+    "andrology": ["ANDROLOGY"],
+    "male health": ["ANDROLOGY"],
+    "testosterone therapy": ["ANDROLOGY"],
+    "erectile dysfunction": ["ANDROLOGY"],
+    "male fertility": ["ANDROLOGY"],
+    "infertility treatment": ["ANDROLOGY"],
+    "sperm count": ["ANDROLOGY"],
+    "penis health": ["ANDROLOGY"],
+    "prostate problems": ["ANDROLOGY"],
+    "male hormone treatment": ["ANDROLOGY"],
+    "sexual health": ["ANDROLOGY"],
+    "low libido": ["ANDROLOGY"],
+    "prostate cancer": ["ANDROLOGY","ONCOLOGY"],
+    "premature ejaculation": ["ANDROLOGY"],
+    "vasectomy": ["ANDROLOGY"],
+    "male reproductive health": ["ANDROLOGY"],
+    "testicular cancer": ["ANDROLOGY"],
+    "andropause": ["ANDROLOGY"],
+
+    "pediatrics": ["PEDIATRICS"],
+    "children's health": ["PEDIATRICS"],
+    "pediatrician": ["PEDIATRICS"],
+    "child growth": ["PEDIATRICS"],
+    "child development": ["PEDIATRICS"],
+    "immunization": ["PEDIATRICS"],
+    "vaccination": ["PEDIATRICS"],
+    "newborn care": ["PEDIATRICS"],
+    "baby doctor": ["PEDIATRICS"],
+    "pediatric exam": ["PEDIATRICS"],
+    "pediatric surgery": ["PEDIATRICS"],
+    "adhd": ["PEDIATRICS"],
+    "asthma": ["PEDIATRICS"],
+    "childhood diseases": ["PEDIATRICS"],
+    "autism": ["PEDIATRICS"],
+    "growth hormone treatment": ["PEDIATRICS"],
+    "pediatric cardiology": ["PEDIATRICS"],
+    "pediatric orthopedics": ["PEDIATRICS"],
+    "pediatric neurology": ["PEDIATRICS"],
+    "pediatric endocrinology": ["PEDIATRICS"],
+    "child obesity": ["PEDIATRICS"],
+    "pediatric allergies": ["PEDIATRICS"],
+    "neonatal care": ["PEDIATRICS"],
+    "pediatric gastroenterology": ["PEDIATRICS"],
+
+    "dermatology": ["DERMATOLOGY"],
+    "skin care": ["DERMATOLOGY"],
+    "acne treatment": ["DERMATOLOGY"],
+    "eczema": ["DERMATOLOGY"],
+    "psoriasis": ["DERMATOLOGY"],
+    "rashes": ["DERMATOLOGY"],
+    "skin cancer": ["DERMATOLOGY"],
+    "dermatologist": ["DERMATOLOGY"],
+    "skin rash": ["DERMATOLOGY"],
+    "sunburn": ["DERMATOLOGY"],
+    "moles": ["DERMATOLOGY"],
+    "skin pigmentation": ["DERMATOLOGY"],
+    "botox": ["DERMATOLOGY"],
+    "laser hair removal": ["DERMATOLOGY"],
+    "anti-aging treatments": ["DERMATOLOGY"],
+    "wrinkles": ["DERMATOLOGY"],
+    "stretch marks": ["DERMATOLOGY"],
+    "hair loss treatment": ["DERMATOLOGY"],
+    "rosacea": ["DERMATOLOGY"],
+    "melasma": ["DERMATOLOGY"],
+    "tattoo removal": ["DERMATOLOGY"],
+    "skin infections": ["DERMATOLOGY"],
+    "skin allergy": ["DERMATOLOGY"],
+    "skin biopsy": ["DERMATOLOGY"],
+    "nail fungus": ["DERMATOLOGY"],
+    "laser treatment for scars": ["DERMATOLOGY"],
+
+    "cardiology": ["CARDIOLOGY"],
+    "heart disease": ["CARDIOLOGY"],
+    "heart problems": ["CARDIOLOGY"],
+    "hypertension": ["CARDIOLOGY"],
+    "chest pain": ["CARDIOLOGY"],
+    "ecg": ["CARDIOLOGY"],
+    "arrhythmia": ["CARDIOLOGY"],
+    "heart attack": ["CARDIOLOGY"],
+    "heart failure": ["CARDIOLOGY"],
+    "cardiologist": ["CARDIOLOGY"],
+    "blood pressure": ["CARDIOLOGY","GENERAL MEDICINE"],
+    "cholesterol": ["CARDIOLOGY","GENERAL MEDICINE"],
+    "coronary artery disease": ["CARDIOLOGY"],
+    "stroke prevention": ["CARDIOLOGY"],
+    "pacemaker": ["CARDIOLOGY"],
+    "cardiac surgery": ["CARDIOLOGY"],
+    "valve problems": ["CARDIOLOGY"],
+    "heart check-up": ["CARDIOLOGY"],
+    "angina": ["CARDIOLOGY"],
+    "heart murmur": ["CARDIOLOGY"],
+    "cardiomyopathy": ["CARDIOLOGY"],
+    "arrhythmic heart disease": ["CARDIOLOGY"],
+    "peripheral artery disease": ["CARDIOLOGY"],
+    "high triglycerides": ["CARDIOLOGY"],
+    "cardiac rehabilitation": ["CARDIOLOGY"],
+    "hypertrophic cardiomyopathy": ["CARDIOLOGY"],
+
+    "neurology": ["NEUROLOGY"],
+    "brain health": ["NEUROLOGY"],
+    "headache": ["NEUROLOGY","GENERAL MEDICINE"],
+    "migraine": ["NEUROLOGY"],
+    "seizures": ["NEUROLOGY"],
+    "neurologist": ["NEUROLOGY"],
+    "stroke": ["NEUROLOGY"],
+    "alzheimer's disease": ["NEUROLOGY"],
+    "parkinson's disease": ["NEUROLOGY"],
+    "memory problems": ["NEUROLOGY"],
+    "numbness": ["NEUROLOGY"],
+    "nervous system": ["NEUROLOGY"],
+    "tremors": ["NEUROLOGY"],
+    "dizziness": ["NEUROLOGY"],
+    "spinal cord injury": ["NEUROLOGY"],
+    "multiple sclerosis": ["NEUROLOGY"],
+    "sleep disorders": ["NEUROLOGY"],
+    "epilepsy": ["NEUROLOGY"],
+    "neuropathy": ["NEUROLOGY"],
+    "nerve pain": ["NEUROLOGY"],
+    "dementia": ["NEUROLOGY"],
+    "nervous system disorders": ["NEUROLOGY"],
+    "neurodegenerative disease": ["NEUROLOGY"],
+    "brain tumor": ["NEUROLOGY"],
+
+    "hepatology": ["HEPATOLOGY"],
+    "liver health": ["HEPATOLOGY"],
+    "hepatitis": ["HEPATOLOGY"],
+    "fatty liver": ["HEPATOLOGY"],
+    "cirrhosis": ["HEPATOLOGY"],
+    "liver transplant": ["HEPATOLOGY"],
+    "liver disease": ["HEPATOLOGY"],
+    "jaundice": ["HEPATOLOGY"],
+    "liver enzymes": ["HEPATOLOGY"],
+    "hepatitis b": ["HEPATOLOGY"],
+    "hepatitis c": ["HEPATOLOGY"],
+    "gallbladder problems": ["HEPATOLOGY"],
+    "liver cancer": ["HEPATOLOGY"],
+    "fatty liver treatment": ["HEPATOLOGY"],
+    "liver function test": ["HEPATOLOGY"],
+    "liver biopsy": ["HEPATOLOGY"],
+    "hepatologist": ["HEPATOLOGY"],
+    "liver cirrhosis": ["HEPATOLOGY"],
+    "cholestasis": ["HEPATOLOGY"],
+    "hepatitis d": ["HEPATOLOGY"],
+    "hepatocellular carcinoma": ["HEPATOLOGY"],
+
+    "oncology": ["ONCOLOGY"],
+    "cancer": ["ONCOLOGY"],
+    "tumor": ["ONCOLOGY"],
+    "oncologist": ["ONCOLOGY"],
+    "chemotherapy": ["ONCOLOGY"],
+    "radiotherapy": ["ONCOLOGY"],
+    "radiation therapy": ["ONCOLOGY"],
+    "breast cancer": ["ONCOLOGY"],
+    "lung cancer": ["ONCOLOGY"],
+    "colon cancer": ["ONCOLOGY"],
+    "leukemia": ["ONCOLOGY"],
+    "lymphoma": ["ONCOLOGY"],
+    "cancer treatment": ["ONCOLOGY"],
+    "immunotherapy": ["ONCOLOGY"],
+    "cancer screening": ["ONCOLOGY"],
+    "cancer surgery": ["ONCOLOGY"],
+    "metastasis": ["ONCOLOGY"],
+    "tumor markers": ["ONCOLOGY"],
+    "palliative care": ["ONCOLOGY"],
+    "radiation oncology": ["ONCOLOGY"],
+    "melanoma": ["ONCOLOGY"],
+    "breast cancer treatment": ["ONCOLOGY"],
+    "colorectal cancer": ["ONCOLOGY"],
+    "cancer immunotherapy": ["ONCOLOGY"],
+
+    "gynecology": ["GYNECOLOGY"],
+    "women's health": ["GYNECOLOGY"],
+    "ob": ["GYNECOLOGY"],
+    "gyn": ["GYNECOLOGY"],
+    "menstrual cycle": ["GYNECOLOGY"],
+    "pregnancy": ["GYNECOLOGY"],
+    "fertility": ["GYNECOLOGY"],
+    "contraception": ["GYNECOLOGY"],
+    "birth control": ["GYNECOLOGY"],
+    "menopause": ["GYNECOLOGY"],
+    "fibroids": ["GYNECOLOGY"],
+    "polycystic ovary syndrome": ["GYNECOLOGY"],
+    "pcos": ["GYNECOLOGY"],
+    "vaginal infections": ["GYNECOLOGY"],
+    "cervical screening": ["GYNECOLOGY"],
+    "ovarian cancer": ["GYNECOLOGY"],
+    "breast exam": ["GYNECOLOGY"],
+    "pelvic pain": ["GYNECOLOGY"],
+    "hysterectomy": ["GYNECOLOGY"],
+    "pregnancy checkup": ["GYNECOLOGY"],
+    "postpartum care": "GYNECOLOGY",
+    "endometriosis": ["GYNECOLOGY"],
+    "hpv vaccination": ["GYNECOLOGY"],
+    "pregnancy complications": ["GYNECOLOGY"],
+    "vaginal prolapse": ["GYNECOLOGY"],
+
+    "ent": ["ENT"],
+    "ear problems": ["ENT"],
+    "nose problems": ["ENT"],
+    "throat problems": ["ENT"],
+    "hearing loss": ["ENT"],
+    "sinusitis": ["ENT"],
+    "allergy": ["ENT"],
+    "tonsilitis": ["ENT"],
+    "ear infection": ["ENT"],
+    "sleep apnea": ["ENT"],
+    "snoring": ["ENT"],
+    "vertigo": ["ENT"],
+    "sore throat": ["ENT"],
+    "nasal congestion": ["ENT"],
+    "deafness": ["ENT"],
+    "sinus infection": ["ENT"],
+    "ear wax removal": ["ENT"],
+    "nasal surgery": ["ENT"],
+    "throat cancer": ["ENT"],
+    "voice disorder": ["ENT"],
+
+    "psychology": ["PSYCHOLOGY"],
+    "mental health": ["PSYCHOLOGY"],
+    "therapy": ["PSYCHOLOGY"],
+    "stress": ["PSYCHOLOGY"],
+    "anxiety": ["PSYCHOLOGY"],
+    "depression": ["PSYCHOLOGY"],
+    "psychologist": ["PSYCHOLOGY"],
+    "counseling": ["PSYCHOLOGY"],
+    "family therapy": ["PSYCHOLOGY"],
+    "addiction": ["PSYCHOLOGY"],
+    "anger management": ["PSYCHOLOGY"],
+    "cognitive therapy": ["PSYCHOLOGY"],
+    "psychotherapy": ["PSYCHOLOGY"],
+    "mental illness": ["PSYCHOLOGY"],
+    "bipolar disorder": ["PSYCHOLOGY"],
+    "ocd": ["PSYCHOLOGY"],
+    "grief counseling": ["PSYCHOLOGY"],
+    "relationship therapy": ["PSYCHOLOGY"],
+    "ptsd": ["PSYCHOLOGY"],
+    "child therapy": ["PSYCHOLOGY"],
+    "couples therapy": ["PSYCHOLOGY"],
+    "addiction therapy": ["PSYCHOLOGY"],
+
+    "general medicine": ["GENERAL MEDICINE"],
+    "primary care": ["GENERAL MEDICINE"],
+    "general practitioner": ["GENERAL MEDICINE"],
+    "check-up": ["GENERAL MEDICINE"],
+    "health screening": ["GENERAL MEDICINE"],
+    "fever": ["GENERAL MEDICINE"],
+    "cold": ["GENERAL MEDICINE"],
+    "stomach pain": ["GENERAL MEDICINE"],
+    "fatigue": ["GENERAL MEDICINE"],
+    "cough": ["GENERAL MEDICINE"],
+    "diabetes": ["GENERAL MEDICINE"],
+    "annual check-up": ["GENERAL MEDICINE"],
+    "chronic illness": ["GENERAL MEDICINE"],
+    "physical exam": ["GENERAL MEDICINE"],
+    "preventative care": ["GENERAL MEDICINE"],
+    "health consultation": ["GENERAL MEDICINE"],
+
+    "ophthalmology": ["OPHTHALMOLOGY"],
+    "eye problems": ["OPHTHALMOLOGY"],
+    "vision": ["OPHTHALMOLOGY"],
+    "glaucoma": ["OPHTHALMOLOGY"],
+    "cataract": ["OPHTHALMOLOGY"],
+    "eye exam": ["OPHTHALMOLOGY"],
+    "lasik": ["OPHTHALMOLOGY"],
+    "astigmatism": ["OPHTHALMOLOGY"],
+    "macular degeneration": ["OPHTHALMOLOGY"],
+    "dry eyes": ["OPHTHALMOLOGY"],
+    "vision correction": ["OPHTHALMOLOGY"],
+    "contact lenses": ["OPHTHALMOLOGY"],
+    "retina": ["OPHTHALMOLOGY"],
+    "eye surgery": ["OPHTHALMOLOGY"],
+    "eye infection": ["OPHTHALMOLOGY"],
+    "color blindness": ["OPHTHALMOLOGY"],
+    "night blindness": ["OPHTHALMOLOGY"],
+    "eye floaters": ["OPHTHALMOLOGY"],
+    "diabetic retinopathy": ["OPHTHALMOLOGY"]
+}
+
+def get_doc_from_dep(specializations):
+    result = []
+    db_doc = db.collection('Department').stream()
+    for specialization in specializations:
+        for department in db_doc:
+            if specialization in department.get("name"):
+                docs = db.collection('Department').document(department.id).collection("Doctors").stream()
+                for data in docs:
+                    result.append(data.to_dict())
+    return result
+
+
+def get_specialization(disease):
+    return disease_to_specialization.get(disease.lower())
+
+
+def get_doctor(name):
+    db_dep = db.collection('Department').stream()
+    result = []
+    for dep in db_dep:
+        db_doc = db.collection('Department').document(dep.id).collection("Doctors").stream()
+        for doctors in db_doc:
+            doc = db.collection('Department').document(dep.id).collection("Doctors").document(doctors.id).get()
+            doctor_data = doc.to_dict()
+            if name.lower() in doctor_data.get("dname").lower():
+                result.append(doctor_data)
+    return result
+
+
+
+
+
 
 ## method for generating otp
 def create_otp():
@@ -279,6 +614,23 @@ def getDepartmentDoctors():
     else:
           return None
 
+
+
+# Route for searching feature in app
+@app.route('/search',methods = ['POST'])
+def getSearchResult():
+    if request.method == 'POST':
+        keyword = request.args.get('keyword')
+        result = get_specialization(keyword)
+
+        if result is None:
+            result = get_doctor(keyword)
+        else:
+            result = get_doc_from_dep(result)
+
+        return jsonify(result)
+    else:
+          return None
 
 
 
