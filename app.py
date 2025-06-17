@@ -212,7 +212,7 @@ def bookAppointment():
     if request.method == 'POST':
             data = request.get_json()   # Give input in JSON format in Postman
 
-            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode']
+            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode','day','payment_status','payment_id','fee']
             missing_fields = [field for field in required_fields if field not in data]
             if missing_fields:
                 missed = ", ".join(missing_fields)
@@ -222,15 +222,18 @@ def bookAppointment():
                 appointment_id = db.collection('Appointment').document().id
                 appointment_data = {
                     'appointment_id': appointment_id,
+                    'payment_id':data['payment_id'],
                     'user_id': data['uid'],
                     'doctor_id': data['did'],
+                    'day':data['day'],
                     'appointment_slot': data['appointment_slot'],
-                    'appointment_date': data['appointment_date'],  # Expected format: "DD-MM-YYYY"
+                    'appointment_date': data['appointment_date'],  # Expected format: "YYYY-MM-DD"
                     'payment_mode': data['payment_mode'],
-                    'payment_status': 'pending'
+                    'payment_status': data['payment_status'],
+                    'fee': int(data['fee'])
                 }
                 db.collection('Appointment').document(appointment_id).set(appointment_data)
-                return jsonify({'message': 'Your Appointment has been Successfully Booked.', 'appointment_id': appointment_id}), 201
+                return jsonify({'message': 'Appointment Successfully Booked.'}), 200
 
             except Exception:
                 return jsonify({"status": False})
@@ -249,7 +252,7 @@ def getUserAppointments():
 
             try:
                 appointments_ref = db.collection('Appointment').where('user_id', '==', user_id).stream()
-                return jsonify({'appointments': list(map(lambda doc: doc.to_dict(), appointments_ref))}), 200
+                return jsonify(list(map(lambda doc: doc.to_dict(), appointments_ref))), 200
 
             except Exception:
                 return jsonify({"status": False})
