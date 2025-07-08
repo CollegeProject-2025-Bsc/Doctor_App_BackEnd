@@ -794,7 +794,22 @@ def retrieveReview ():
         return None
 
 
+# endpoint to delete a favorite doctor
+@app.route ('/delete_favdoctor', methods = ['POST'])
+def delete_favDoctor ():
+    if request.method == 'POST':
+        user_id = request.args.get('uid')
+        favdoc_ref = request.args.get('favdoc')
 
+        try:
+           db.collection('Users').document(user_id).collection('Fav Doctors').document(favdoc_ref).delete()
+           return jsonify({'message': 'Successfully Deleted.'}), 200
+
+        except Exception:
+            return jsonify({"status": False})
+
+    else:
+            return None
 
 ## main function
 if __name__ == '__main__':
