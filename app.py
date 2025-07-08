@@ -2,14 +2,19 @@ from flask import Flask, jsonify, request
 import firebase_admin
 from firebase_admin import firestore, credentials
 from twilio.rest import Client
-import random
+import random, time
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import threading
 
 
 ## twilio auth credential
 TWILIO_ACCOUNT_SID = 'ACe13f73d65b4d20704f76f70631e64c9f'
 TWILIO_AUTH_TOKEN = 'f7f09156bee438719b49241279dd2fe8'
 TWILIO_PHONE_NUMBER = '+17627631791'
-
+SENDER_EMAIL = "subho20042021@gmail.com"
+APP_PASSWORD = "ftpo sjtz lxwv zjza"
 
 
 
@@ -30,7 +35,22 @@ db = firestore.client()
 ## initializing flask
 app = Flask(__name__)
 
-
+specialization_to_department = {
+    "Kidney specialist.":"0Z0REKdBoh26uztxls5O",
+    "Male reproductive health specialist.":"1Btk8lo1MRxe8IdS86DV",
+    "Child specialist ":"6Z1XEm7FDeUmO9PrR7EC",
+    "Skin specialist ":"PYwQSszcwLIIedBcALte",
+    "Heart specialist.":"RXW99QiqaxoxlFRc8CqU",
+    "Brain specialist.":"Xarb6UIl9ltLD5DYXPUd",
+    "Liver specialist.":"ZRdVkUdZdmA1skAK2CuR",
+    "Cancer specialist.":"dbtgzwMghtBrDjPaGMPo",
+    "female reproductive health specialist.":"jtqitfiKVqm0uXBYxdN8",
+    "Ear, Nose, Throat specialist.":"kGdYDXlAFA10Lyrj4hVo",
+    "Mental health specialist.":"rapjhUpCY7G86kkkWiMz",
+    "General medicine specialist.":"v5oKNXfUIQT5pCjd6TPw",
+    "Eyes specialist.":"viyRvQlXNX8xC5U2JifE",
+    "Bone specialist.":"xWYnjztaHU6LX5kV8INH"
+}
 
 disease_to_specialization = {
     "kidney problem":["NEPHROLOGY"],
@@ -547,7 +567,7 @@ def bookAppointment():
     if request.method == 'POST':
             data = request.get_json()   # Give input in JSON format in Postman
 
-            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode','day','payment_status','payment_id','fee']
+            required_fields = ['uid', 'did', 'appointment_slot', 'appointment_date', 'payment_mode','day','payment_status','payment_id','fee','time','dname','specialization','pic']
             missing_fields = [field for field in required_fields if field not in data]
             if missing_fields:
                 missed = ", ".join(missing_fields)
@@ -555,17 +575,26 @@ def bookAppointment():
 
             try:
                 appointment_id = db.collection('Appointment').document().id
+
+                dep_id = specialization_to_department.get(data['specialization'])
+
+
                 appointment_data = {
                     'appointment_id': appointment_id,
                     'payment_id':data['payment_id'],
                     'user_id': data['uid'],
                     'doctor_id': data['did'],
                     'day':data['day'],
+                    'time':data['time'],
                     'appointment_slot': data['appointment_slot'],
                     'appointment_date': data['appointment_date'],  # Expected format: "YYYY-MM-DD"
                     'payment_mode': data['payment_mode'],
                     'payment_status': data['payment_status'],
-                    'fee': int(data['fee'])
+                    'fee': int(data['fee']),
+                    'dname': data['dname'],
+                    'specialization': data['specialization'],
+                    'pic':data['pic'],
+                    "dep_id":dep_id
                 }
                 db.collection('Appointment').document(appointment_id).set(appointment_data)
                 return jsonify({'message': 'Appointment Successfully Booked.'}), 200
@@ -576,6 +605,60 @@ def bookAppointment():
         return None
 
 
+
+#Route for sending email to user
+def monitor_appointments():
+    print("Monitoring for deleted appointments...")
+    prev_appointments = {}
+
+    while True:
+        current_docs = db.collection("Appointment").stream()
+        current = {}
+        for doc in current_docs:
+            data = doc.to_dict()
+            current[doc.id] = data
+
+        deleted_ids = set(prev_appointments.keys()) - set(current.keys())
+        for deleted_id in deleted_ids:
+            deleted_appt = prev_appointments[deleted_id]
+            user = db.collection('Users').document(deleted_appt['user_id']).get().to_dict()
+            send_email(user['uEmail'], deleted_id)
+
+        prev_appointments = current
+        time.sleep(10)
+
+
+def send_email(email,id):
+    subject = "Appointment Cancelled"
+    body = f"Your appointment ({id}) has been cancelled."
+
+    message = MIMEMultipart()
+    message["From"] = SENDER_EMAIL
+    message["To"] = email
+    message["Subject"] = subject
+    message.attach(MIMEText(body, "plain"))
+
+    try:
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(SENDER_EMAIL, APP_PASSWORD)
+            server.send_message(message)
+        print(f"Email sent to {email}")
+    except Exception as e:
+        print("Email failed:", e)
+
+
+#Route for delete a appointment
+@app.route("/delete_appointment", methods = ['POST'])
+def deleteAppointment():
+    if request.method == 'POST':
+        try:
+            appointment_id = request.args.get('appointment_id')
+            email = request.args.get('uEmail')
+            appointments_ref = db.collection('Appointment').document(appointment_id).delete()
+            return jsonify({'success': True})
+        except Exception as e:
+            return jsonify({'success': False})
 
 # Route for retrieving all Appointment details booked by a specific user
 @app.route('/get_user_appointments', methods=['POST'])
@@ -638,6 +721,8 @@ def getSearchResult():
 
 ## main function
 if __name__ == '__main__':
+    threading.Thread(target=monitor_appointments, daemon=True).start()
+    print("Active threads:", threading.enumerate())
     app.run()
 
 ## last block of our app.py file
