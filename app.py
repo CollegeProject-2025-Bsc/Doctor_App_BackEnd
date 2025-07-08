@@ -11,7 +11,7 @@ import threading
 
 ## twilio auth credential
 TWILIO_ACCOUNT_SID = 'ACe13f73d65b4d20704f76f70631e64c9f'
-TWILIO_AUTH_TOKEN = 'f7f09156bee438719b49241279dd2fe8'
+TWILIO_AUTH_TOKEN = '288bb82d3f92bc0a363880961315fefd'
 TWILIO_PHONE_NUMBER = '+17627631791'
 SENDER_EMAIL = "subho20042021@gmail.com"
 APP_PASSWORD = "ftpo sjtz lxwv zjza"
@@ -249,6 +249,7 @@ disease_to_specialization = {
 
     "gynecology": ["GYNECOLOGY"],
     "women's health": ["GYNECOLOGY"],
+    "female's health": ["GYNECOLOGY"],
     "ob": ["GYNECOLOGY"],
     "gyn": ["GYNECOLOGY"],
     "menstrual cycle": ["GYNECOLOGY"],
@@ -357,18 +358,31 @@ disease_to_specialization = {
 
 def get_doc_from_dep(specializations):
     result = []
-    db_doc = db.collection('Department').stream()
+    db_docs = list(db.collection('Department').stream())  # Convert generator to list
+
     for specialization in specializations:
-        for department in db_doc:
-            if specialization in department.get("name"):
+        for department in db_docs:
+            dep_name = department.get("name").lower()
+            if specialization.lower() in dep_name:
                 docs = db.collection('Department').document(department.id).collection("Doctors").stream()
                 for data in docs:
                     result.append(data.to_dict())
+
+
     return result
 
 
 def get_specialization(disease):
-    return disease_to_specialization.get(disease.lower())
+    user_input = disease.lower().strip()
+    # Exact match first
+    if user_input in disease_to_specialization:
+        return disease_to_specialization[user_input]
+
+    # Partial match
+    for key in disease_to_specialization:
+        if user_input in key:
+            return disease_to_specialization[key]
+    return None
 
 
 def get_doctor(name):
