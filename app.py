@@ -732,6 +732,54 @@ def getSearchResult():
 
 
 
+# endpoint for giving doctors review
+@app.route ('/add_review', methods = ['POST'])
+def addReview ():
+    if request.method == 'POST':
+        data = request.get_json()
+        dept_id = data['dept_id']
+        doc_id = data['did']
+
+        try:
+                review_id = db.collection('Department').document(dept_id).collection('Doctors').document(doc_id).collection('Review').document().id
+
+                review = {
+                    'user_id': data['uid'],
+                    'review': data['review'],
+                    'rating': int(data['rating']),
+                    'appointment_id': data['appointment_id']
+                }
+
+                db.collection('Department').document(dept_id).collection('Doctors').document(doc_id).collection('Review').document(review_id).set(review)
+                return jsonify({'message': 'Thanks for your Review.'}), 200
+
+        except Exception:
+                return jsonify({"status": False})
+
+    else:
+        return None
+
+
+
+# endpoint for fetching user review
+@app.route ('/retrieve_review', methods = ['POST'])
+def retrieveReview ():
+    if request.method == 'POST':
+        dept_id = request.args.get('dept_id')
+        doc_id = request.args.get('did')
+
+        try:
+            review = db.collection('Department').document(dept_id).collection('Doctors').document(doc_id).collection('Review').stream()
+            return jsonify(list(map(lambda doc: doc.to_dict(), review))), 200
+
+        except Exception:
+            return jsonify({"status": False})
+
+    else:
+        return None
+
+
+
 
 ## main function
 if __name__ == '__main__':
