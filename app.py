@@ -545,8 +545,21 @@ def getFavDoctors ():
         user_id = request.args.get('uid')
         try:
             user_doc = db.collection('Users').document(user_id).collection('Fav Doctors').stream()
-            return jsonify(list(map(lambda doc: doc.to_dict(), user_doc)))
+            fav_doctors = []
 
+            for ref in user_doc:
+                data = ref.to_dict()
+                dep_id = data.get('dep_id')
+                doc_id = data.get('did')
+
+                if dep_id and doc_id:
+                    doctor_ref = db.collection('Department').document(dep_id).collection('Doctors').document(doc_id)
+                    doctor_doc = doctor_ref.get()
+                    if doctor_doc.exists:
+                        fav_doctors.append(doctor_doc.to_dict())
+
+            return jsonify(fav_doctors)
+            return jsonify(list(map(lambda doc: doc.to_dict(), user_doc)))
         except Exception:
             return jsonify({"status": False})
     else:
@@ -559,7 +572,9 @@ def addFavDoctor():
     if request.method == 'POST':
         user_id = request.args.get('uid')
         doc_id = request.args.get('did')
-        dep_id = request.args.get('id')
+        specialization = request.args.get('specialization')
+
+        dep_id = specialization_to_department.get(specialization)
 
         fav_doc_id = db.collection('Users').document(user_id).collection('Fav Doctors').document().id
 
