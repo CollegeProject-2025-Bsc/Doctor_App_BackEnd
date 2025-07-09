@@ -752,24 +752,25 @@ def getSearchResult():
 def addReview ():
     if request.method == 'POST':
         data = request.get_json()
-        dept_id = data['dept_id']
+        dep_id = data['dep_id']
         doc_id = data['did']
-
+        print(doc_id)
         try:
-                review_id = db.collection('Department').document(dept_id).collection('Doctors').document(doc_id).collection('Review').document().id
+                review_id = db.collection('Department').document(dep_id).collection('Doctors').document(doc_id).collection('Review').document().id
 
                 review = {
-                    'user_id': data['uid'],
+                    'user': data['uName'],
                     'review': data['review'],
-                    'rating': int(data['rating']),
-                    'appointment_id': data['appointment_id']
+                    'rating': float(data['rating']),
+                    'appointment_id': data['appointment_id'],
+                    'date':data['date']
                 }
 
-                db.collection('Department').document(dept_id).collection('Doctors').document(doc_id).collection('Review').document(review_id).set(review)
+                db.collection('Department').document(dep_id).collection('Doctors').document(doc_id).collection('Review').document(review_id).set(review)
                 return jsonify({'message': 'Thanks for your Review.'}), 200
 
         except Exception:
-                return jsonify({"status": False})
+            return jsonify({"status": False})
 
     else:
         return None
@@ -799,10 +800,13 @@ def retrieveReview ():
 def delete_favDoctor ():
     if request.method == 'POST':
         user_id = request.args.get('uid')
-        favdoc_ref = request.args.get('favdoc')
+        did = request.args.get('did')
 
         try:
-           db.collection('Users').document(user_id).collection('Fav Doctors').document(favdoc_ref).delete()
+           collection_ref = db.collection('Users').document(user_id).collection('Fav Doctors')
+           docs = collection_ref.where("did", "==", did).stream()
+           for doc in docs:
+               collection_ref.document(doc.id).delete()
            return jsonify({'message': 'Successfully Deleted.'}), 200
 
         except Exception:
